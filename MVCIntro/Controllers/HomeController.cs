@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MVCIntro.Models;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 
 namespace MVCIntro.Controllers
 {
@@ -13,9 +14,14 @@ namespace MVCIntro.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string name = "Nisse")
         {
-            return View();
+            TempData["Name"] = name;
+            ViewBag.Name = name;
+
+            var model = new List<string>() { "Hej", "På", "Dig", "Potatis" };
+            
+            return View(nameof(Index),model);
         }
 
         public IActionResult Privacy()
@@ -27,6 +33,27 @@ namespace MVCIntro.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public IActionResult GetValues()
+        {
+            return View(); 
+        }
+        [HttpPost]
+        public IActionResult GetValues(string name, int salary)
+        {
+            return View();
+        }
+
+        public IActionResult GetValuesWithModel()
+        {
+            return View(); 
+        }
+
+        [HttpPost]
+        public IActionResult GetValuesWithModel(Employee employee)
+        {
+            return View(); 
         }
     }
 }
