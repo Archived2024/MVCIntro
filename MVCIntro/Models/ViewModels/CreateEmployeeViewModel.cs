@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MVCIntro.Models
+namespace MVCIntro.Models.ViewModels
 {
-    public class Employee
+    public class CreateEmployeeViewModel
     {
-        public int Id { get; set; }
         [StringLength(20)]
         public string Name { get; set; }
-        public int Salary { get; set; }
-
         public string Department { get; set; }
+
+        [Range(500,50000)]
+        public int Salary { get; set; }
     }
 }

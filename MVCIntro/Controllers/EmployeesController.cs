@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MVCIntro.Data;
 using MVCIntro.Models;
+using MVCIntro.Models.ViewModels;
 
 namespace MVCIntro.Controllers
 {
@@ -28,7 +29,25 @@ namespace MVCIntro.Controllers
         public async Task<IActionResult> Index()
         {
 
-            return View("Index2");
+            var model = _context.Employee.Select(e => new EmployeeIndexViewModel
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Department = e.Department
+            });
+
+            return View("Index2", await model.ToListAsync());
+        }
+
+        public async Task<IActionResult> Search(string searchField)
+        {
+            var result = _context.Employee.Where(x => x.Name.Contains(searchField)).Select(e => new EmployeeIndexViewModel
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Department = e.Department
+            });
+            return View("Index2", await result.ToListAsync());
         }
 
         // GET: Employees/Details/5
@@ -60,15 +79,22 @@ namespace MVCIntro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Salary,Department")] Employee employee)
+        public async Task<IActionResult> Create(/*[Bind("Id,Name,Salary,Department")] Employee employee*/ CreateEmployeeViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
+                var employee = new Employee
+                {
+                    Name = viewModel.Name,
+                    Department = viewModel.Department,
+                    Salary = viewModel.Salary
+                };
+
                 _context.Add(employee);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(employee);
+            return View(viewModel);
         }
 
         // GET: Employees/Edit/5
